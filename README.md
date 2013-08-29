@@ -8,6 +8,7 @@ I mainly use these scripts for my own personal database setups. Currently, the f
 ## Description
 ### install_db_software.sh
 In its current form, this script allows you to automatically install the Oracle 12c Grid Infrastructure (GI) and Oracle 12c Database Software on a Linux server. For prerequisites, see the header of the script itself. Execute this script as the `root` user. There are a few variables that you can tweak:
+
 Variable | Description
 --- | ---
 ORACLE_USER | User that will perform the Oracle installation and be the owner of the Oracle software directory
@@ -23,6 +24,7 @@ ORACLE_MEMORY_SIZE | Size of the shared memory pool (shmfs)
 
 ### mkoradb.sh
 This script allows you to create a new Oracle 12c database on a server where the Oracle software was already installed. The script will create the necessary folders (according to OFA), prepare all necessary files for database configuration and will then create a new database. Execute this script as the `oracle` user. There are a few variables that you can tweak:
+
 Variable | Description
 --- | ---
 ORACLE_SID | Name of the database you want to create (will be the name of the instance as well as the DB_NAME)
