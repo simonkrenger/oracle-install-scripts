@@ -3,7 +3,7 @@
 # DB Creation Script for Oracle 12.1
 # Simon Krenger <simon@krenger.ch>
 # August 2013
-export ORACLE_SID=${ORACLE_SID}
+export ORACLE_SID=mydb01
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=${ORACLE_BASE}/product/12.1.0/db_1
 
@@ -141,5 +141,5 @@ unset MY_ORACLE_PASSWD
 
 # TODO: Simon specific
 # - ln (auth)
-# - MYdba
+# - dba User
 # - 
