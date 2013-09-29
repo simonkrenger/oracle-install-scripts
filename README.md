@@ -7,7 +7,7 @@ I mainly use these scripts for my own personal database setups. Currently, the f
 
 ## Description
 ### install_db_software.sh
-In its current form, this script allows you to automatically install the Oracle 12c Grid Infrastructure (GI) and Oracle 12c Database Software on a Linux server. For prerequisites, see the header of the script itself. Execute this script as the `root` user. There are a few variables that you can tweak:
+In its current form, this script allows you to automatically install the Oracle 12c Grid Infrastructure (GI) and Oracle 12c Database Software on a Linux server (plus there are scripts for Oracle 11g R2). For prerequisites, see the header of the script itself. Execute this script as the `root` user. There are a few variables that you can tweak:
 
 Variable | Description
 --- | ---
@@ -23,7 +23,7 @@ GRID_HOME | GI Installation directory
 ORACLE_MEMORY_SIZE | Size of the shared memory pool (shmfs)
 
 ### mkoradb.sh
-This script allows you to create a new Oracle 12c database on a server where the Oracle software was already installed. The script will create the necessary folders (according to OFA), prepare all necessary files for database configuration and will then create a new database. Execute this script as the `oracle` user. There are a few variables that you can tweak:
+This script allows you to create a new Oracle 12c database or Oracle 11g database on a server where the Oracle software was already installed. The script will create the necessary folders (according to OFA), prepare all necessary files for database configuration and will then create a new database. Execute this script as the `oracle` user. There are a few variables that you can tweak:
 
 Variable | Description
 --- | ---
@@ -37,4 +37,4 @@ MY_CHARSET | Character set to use for the database (default AL32UTF8)
 MY_NCHARSET | National character set to use for the database (default AL16UTF16)
 
 ## Work in progress
-These scripts are far from perfect, I just like to keep them handy for my own reference. Use with caution.
+These scripts are far from perfect, I just like to keep them handy for my own reference. Use with caution and at your own risk.
