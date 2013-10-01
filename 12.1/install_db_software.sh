@@ -28,8 +28,51 @@ export ORACLE_MEMORY_SIZE=800M
 
 unset LANG
 
+### Script start
 
-### Script start
+usage()
+{
+cat << EOF
+usage: $0 [-h] [-u ORACLE_USER] [-m ORACLE_MEMORY_SIZE] [-i INSTALLFILES_DIR]
+
+This script is used to install Oracle Grid Infrastructure and the Oracle
+database software. The default settings will install the database software
+according to the OFA standard.
+
+OPTIONS:
+   -h      Show this message
+   -i      Folder that contains the installation ZIP files. Defaults to
+           "/home/oracle/"
+   -u      User that owns the Oracle software installation. Defaults to "oracle"
+   -m      Aggregate shared memory size for all databases on this machine.
+           Defaults to 800M.
+EOF
+}
+
+# Parse arguments
+while getopts "hi:u:m:" OPTION
+do
+     case $OPTION in
+         h)
+             usage
+             exit 1
+             ;;
+         i)
+             ORACLE_INSTALLFILES_LOCATION=$OPTARG
+             ;;
+	 u)
+	     ORACLE_USER=$OPTARG
+	     ;;
+	 m)
+	     ORACLE_MEMORY_SIZE=$OPTARG
+	     ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
 # Check if run as root
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 1>&2
@@ -44,6 +87,46 @@ else
 	exit 1
 fi
 
+# Check necessary programs installed
+which unzip
+if [ $? -eq 0 ]; then
+	echo "unzip is installed"
+else
+	echo "unzip not found, aborting..."
+	exit 1
+fi
+
+which oracle-rdbms-server-12cR1-preinstall-verify
+if [ $? -eq 0 ]; then
+	echo "oracle-rdbms-server-12cR1-preinstall-verify is installed"
+else
+	echo "oracle-rdbms-server-12cR1-preinstall-verify not found, aborting..."
+	exit 1
+fi
+
+which ntpdate
+if [ $? -eq 0 ]; then
+	echo "ntpdate is installed"
+else
+	echo "ntpdate not found, aborting..."
+	exit 1
+fi
+
+if [ -d "$ORACLE_INSTALLFILES_LOCATION" ]; then
+	echo "$ORACLE_INSTALLFILES_LOCATION exists"
+	if [ `ls -l $ORACLE_INSTALLFILES_LOCATION/V385*-01_*of2.zip | wc -l` -eq 4 ]; then
+		echo "Correct amount of ZIPs found, proceeding..."
+	else
+		echo "No or wrong installation ZIP files found."
+		echo "Please make sure V38501-01_1of2.zip, V38501-01_2of2.zip, V38500-01_1of2.zip and V38500-01_2of2.zip are placed in $ORACLE_INSTALLFILES_LOCATION"
+		exit 1
+	fi
+else
+	echo "$ORACLE_INSTALLFILES_LOCATION does not exist, aborting..."
+	exit 1
+fi
+
+
 # Prepare filesystem
 mkdir -p ${ORACLE_BASE_MOUNTS}
 mkdir -p ${ORACLE_HOME}
@@ -52,15 +135,13 @@ chown -R ${ORACLE_USER}:oinstall ${ORACLE_BASE_MOUNTS}
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_BASE}
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_INVENTORY_LOCATION}
 
-
-
 # Prepare groups and users
 groupadd asmdba
 groupadd asmoper
 groupadd dgdba
 groupadd bckpdba
 groupadd kmdba
-usermod -a -G asmoper,asmdba,dgdba,bckpdba,kmdba ${ORACLE_USER}
+usermod -a -G dba,asmoper,asmdba,dgdba,bckpdba,kmdba ${ORACLE_USER}
 
 
 # Modify NTPD
@@ -69,11 +150,11 @@ echo 'OPTIONS="-u ntp:ntp -x -p /var/run/ntpd.pid"' > /etc/sysconfig/ntpd
 ntpdate pool.ntp.org
 service ntpd start
 
-# Modify hosts
+# Modify /etc/hosts
 mv /etc/hosts /etc/hosts.original
 cat /etc/hosts.original | awk '$1~"^127.0.0.1|^::1"{$2="'`hostname -s`' '`hostname`' "$2}1' OFS="\t" > /etc/hosts
 
-# Modify FSTAB
+# Modify /etc/fstab
 mv /etc/fstab /etc/fstab.original
 cat /etc/fstab.original | awk '$3~"^tmpfs$"{$4="size='$ORACLE_MEMORY_SIZE'"}1' OFS="\t" > /etc/fstab
 mount -t tmpfs shmfs -o size=$ORACLE_MEMORY_SIZE /dev/shm
@@ -86,13 +167,15 @@ cd ${ORACLE_INSTALLFILES_LOCATION}
 unzip ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_1of2.zip
 unzip ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_2of2.zip
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_INSTALLFILES_LOCATION}/grid
-rm ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_1of2.zip ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_2of2.zip
+#TODO: Check if everything worked as expected and only remove if no errors occured
+#rm ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_1of2.zip ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_2of2.zip
 
 # Oracle database software
 unzip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_1of2.zip
 unzip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_2of2.zip
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_INSTALLFILES_LOCATION}/database
-rm  ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_1of2.zip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_2of2.zip
+#TODO: Check if everything worked as expected and only remove if no errors occured
+#rm  ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_1of2.zip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_2of2.zip
 
 
 # Installation of Grid Infrastructure
@@ -104,7 +187,7 @@ SELECTED_LANGUAGES=en
 oracle.install.option=CRS_SWONLY
 ORACLE_BASE="${GRID_BASE}"
 ORACLE_HOME="${GRID_HOME}"
-oracle.install.asm.OSDBA=asmdba
+oracle.install.asm.OSDBA=dba
 oracle.install.asm.OSOPER=asmoper
 oracle.install.asm.OSASM=asmdba
 oracle.installer.autoupdates.option=SKIP_UPDATES" > ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp
