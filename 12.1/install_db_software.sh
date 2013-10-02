@@ -12,19 +12,19 @@
 # Simon Krenger <simon@krenger.ch>
 # August 2013
 
-export ORACLE_USER=oracle
-export ORACLE_HOME=/u01/app/oracle/product/12.1.0/db_1
-export ORACLE_BASE=/u01/app/oracle
+ORACLE_MOUNTPOINTS={/u01 /u02 /u03 /u04}
 
-export ORACLE_BASE_MOUNTS="/u01 /u02 /u03"
-export ORACLE_INVENTORY_LOCATION=/etc/oraInventory
-export ORACLE_INSTALLFILES_LOCATION=/home/oracle
+ORACLE_USER=oracle
+ORACLE_BASE=${ORACLE_MOUNTPOINTS[0]}/app/oracle
+ORACLE_HOME=${ORACLE_BASE}/product/12.1.0/db_1
+ORACLE_INVENTORY_LOCATION=/etc/oraInventory
+ORACLE_INSTALLFILES_LOCATION=/home/oracle
 
-export GRID_USER=oracle
-export GRID_BASE=/u01/app/grid
-export GRID_HOME=/u01/app/grid/product/12.1.0/grid_1
+GRID_USER=oracle
+GRID_BASE=${ORACLE_MOUNTPOINTS[0]}/app/grid
+GRID_HOME=${GRID_BASE}/product/12.1.0/grid_1
 
-export ORACLE_MEMORY_SIZE=800M
+ORACLE_MEMORY_SIZE=800M
 
 unset LANG
 
@@ -41,11 +41,10 @@ according to the OFA standard.
 
 OPTIONS:
    -h      Show this message
-   -i      Folder that contains the installation ZIP files. Defaults to
-           "/home/oracle/"
-   -u      User that owns the Oracle software installation. Defaults to "oracle"
+   -i      Folder that contains the installation ZIP files. Defaults to "$ORACLE_INSTALLFILES_LOCATION"
+   -u      User that owns the Oracle software installation. Defaults to "$ORACLE_USER"
    -m      Aggregate shared memory size for all databases on this machine.
-           Defaults to 800M.
+           Defaults to $ORACLE_MEMORY_SIZE.
 EOF
 }
 
@@ -128,10 +127,17 @@ fi
 
 
 # Prepare filesystem
-mkdir -p ${ORACLE_BASE_MOUNTS}
+
+# Make sure the mountpoints exist
+# This command will create them as folders if necessary
+for mountpoint in ${ORACLE_MOUNTPOINTS[*]}
+do
+	mkdir -p $mountpoint
+	chown -R ${ORACLE_USER}:oinstall $mountpoint
+done
+
 mkdir -p ${ORACLE_HOME}
 mkdir -p ${ORACLE_INVENTORY_LOCATION}
-chown -R ${ORACLE_USER}:oinstall ${ORACLE_BASE_MOUNTS}
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_BASE}
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_INVENTORY_LOCATION}
 
