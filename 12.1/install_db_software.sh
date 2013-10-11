@@ -145,12 +145,12 @@ chown -R ${ORACLE_USER}:oinstall ${GRID_BASE}
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_INVENTORY_LOCATION}
 
 # Prepare groups and users
-groupadd asmdba
+groupadd asmadmin
 groupadd asmoper
 groupadd dgdba
 groupadd bckpdba
 groupadd kmdba
-usermod -a -G dba,asmoper,asmdba,dgdba,bckpdba,kmdba ${ORACLE_USER}
+usermod -a -G dba,asmoper,asmadmin,dgdba,bckpdba,kmdba ${ORACLE_USER}
 
 
 # Modify NTPD
@@ -187,7 +187,7 @@ ORACLE_BASE="${GRID_BASE}"
 ORACLE_HOME="${GRID_HOME}"
 oracle.install.asm.OSDBA=oinstall
 oracle.install.asm.OSOPER=asmoper
-oracle.install.asm.OSASM=asmdba
+oracle.install.asm.OSASM=asmadmin
 oracle.installer.autoupdates.option=SKIP_UPDATES" > ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp
 
 echo "Now installing Grid Infrastructure. This may take a while..."
