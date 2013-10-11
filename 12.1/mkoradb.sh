@@ -3,25 +3,38 @@
 # DB Creation Script for Oracle 12.1
 # Simon Krenger <simon@krenger.ch>
 # August 2013
-export ORACLE_SID=mydb01
-export ORACLE_BASE=/u01/app/oracle
-export ORACLE_HOME=${ORACLE_BASE}/product/12.1.0/db_1
+ORACLE_SID=mydb01
 
-export MY_ORACLE_PASSWD=tiger
-export MY_MEMORY_TARGET=800M
-export MY_REDO_SIZE=100M
-export MY_CHARSET=AL32UTF8
-export MY_NCHARSET=AL16UTF16
+# Oracle mountpoints.
+# OFA defines the following usages (Array indexes):
+# Index 0: Software Mountpoint
+# Index 1: Datafiles
+# Index 2: Redo Logs
+# Index 3: Redo Logs
+ORACLE_MOUNTPOINTS={/u01 /u02 /u03 /u04}
+ORACLE_BASE=/u01/app/oracle
+ORACLE_HOME=${ORACLE_BASE}/product/12.1.0/db_1
+
+MY_ORACLE_PASSWD=tiger
+MY_MEMORY_TARGET=800M
+MY_REDO_SIZE=100M
+MY_CHARSET=AL32UTF8
+MY_NCHARSET=AL16UTF16
 
 
 ### Script start
 echo "== Script start =="
 
+#TODO: Check if user is oracle
+
 # Create folders
 echo "Creating folders..."
 mkdir -p ${ORACLE_BASE}/admin/${ORACLE_SID}/{pfile,scripts,dpdump,logbook}
-mkdir -p /u0{1,2,3}/app/oracle/oradata/${ORACLE_SID}
-mkdir -p /u02/app/oracle/oradata/pdbseed
+for mountpoint in ${ORACLE_MOUNTPOINTS[*]}
+do
+	mkdir -p $mountpoint/app/oracle/oradata/${ORACLE_SID}
+done
+mkdir -p /u02/app/oracle/oradata/${ORACLE_SID}/pdbseed
 
 # Authentication
 echo "Executing ORAPWD..."
@@ -43,15 +56,12 @@ STARTUP NOMOUNT;
 EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/01_spfile.sql
 
 echo "CREATE DATABASE "${ORACLE_SID}"
-	LOGFILE GROUP 1 ('/u01/app/oracle/oradata/"${ORACLE_SID}"/redo01a.rdo',
-			'/u02/app/oracle/oradata/"${ORACLE_SID}"/redo01b.rdo',
-			'/u03/app/oracle/oradata/"${ORACLE_SID}"/redo01c.rdo') SIZE "${MY_REDO_SIZE}",
-	GROUP 2 ('/u01/app/oracle/oradata/"${ORACLE_SID}"/redo02a.rdo',
-		'/u02/app/oracle/oradata/"${ORACLE_SID}"/redo02b.rdo',
-		'/u03/app/oracle/oradata/"${ORACLE_SID}"/redo02c.rdo') SIZE "${MY_REDO_SIZE}",
-	GROUP 3 ('/u01/app/oracle/oradata/"${ORACLE_SID}"/redo03a.rdo',
-		'/u02/app/oracle/oradata/"${ORACLE_SID}"/redo03b.rdo',
-		'/u03/app/oracle/oradata/"${ORACLE_SID}"/redo03c.rdo') SIZE "${MY_REDO_SIZE}"
+	LOGFILE GROUP 1 ('/u03/app/oracle/oradata/"${ORACLE_SID}"/redo01a.rdo',
+			'/u04/app/oracle/oradata/"${ORACLE_SID}"/redo01b.rdo') SIZE "${MY_REDO_SIZE}",
+	GROUP 2 ('/u03/app/oracle/oradata/"${ORACLE_SID}"/redo02a.rdo',
+		'/u04/app/oracle/oradata/"${ORACLE_SID}"/redo02b.rdo') SIZE "${MY_REDO_SIZE}",
+	GROUP 3 ('/u03/app/oracle/oradata/"${ORACLE_SID}"/redo03a.rdo',
+		'/u04/app/oracle/oradata/"${ORACLE_SID}"/redo03b.rdo') SIZE "${MY_REDO_SIZE}"
         CHARACTER SET "${MY_CHARSET}"
         NATIONAL CHARACTER SET "${MY_NCHARSET}"
         EXTENT MANAGEMENT LOCAL
@@ -65,10 +75,10 @@ echo "CREATE DATABASE "${ORACLE_SID}"
 	SIZE 100M AUTOEXTEND ON NEXT 50M MAXSIZE UNLIMITED
         ENABLE PLUGGABLE DATABASE
         SEED
-        FILE_NAME_CONVERT = ('/u02/app/oracle/oradata/"${ORACLE_SID}"/', '/u02/app/oracle/oradata/pdbseed/')
+        FILE_NAME_CONVERT = ('/u02/app/oracle/oradata/"${ORACLE_SID}"/', '/u02/app/oracle/oradata/"${ORACLE_SID}"/pdbseed/')
         SYSTEM DATAFILES SIZE 100M AUTOEXTEND ON NEXT 50M MAXSIZE UNLIMITED
         SYSAUX DATAFILES SIZE 100M
-        USER_DATA TABLESPACE users DATAFILE '/u02/app/oracle/oradata/pdbseed/users01.dbf'
+        USER_DATA TABLESPACE users DATAFILE '/u02/app/oracle/oradata/"${ORACLE_SID}"/pdbseed/users01.dbf'
 	SIZE 100M REUSE AUTOEXTEND ON MAXSIZE UNLIMITED;
 
 CREATE TABLESPACE users DATAFILE '/u02/app/oracle/oradata/"${ORACLE_SID}"/users01.dbf'

@@ -138,8 +138,10 @@ do
 done
 
 mkdir -p ${ORACLE_HOME}
+mkdir -p ${GRID_HOME}
 mkdir -p ${ORACLE_INVENTORY_LOCATION}
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_BASE}
+chown -R ${ORACLE_USER}:oinstall ${GRID_BASE}
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_INVENTORY_LOCATION}
 
 # Prepare groups and users
