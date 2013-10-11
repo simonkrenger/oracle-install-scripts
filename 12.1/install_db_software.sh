@@ -8,6 +8,7 @@
 # - Executed oracle-rdbms-server-12cR1-preinstall-verify
 # - Copied V*.zip packages (GI and DB software) to $ORACLE_INSTALLFILES_LOCATION
 # - (Optional) # passwd oracle
+# - Mountpoints $ORACLE_MOUNTPOINTS exist
 #
 # Simon Krenger <simon@krenger.ch>
 # August 2013
@@ -165,24 +166,13 @@ mv /etc/fstab /etc/fstab.original
 cat /etc/fstab.original | awk '$3~"^tmpfs$"{$4="size='$ORACLE_MEMORY_SIZE'"}1' OFS="\t" > /etc/fstab
 mount -t tmpfs shmfs -o size=$ORACLE_MEMORY_SIZE /dev/shm
 
-
-## Unpack files
-cd ${ORACLE_INSTALLFILES_LOCATION}
-
 # Grid infrastructure
+cd ${ORACLE_INSTALLFILES_LOCATION}
 unzip ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_1of2.zip
 unzip ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_2of2.zip
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_INSTALLFILES_LOCATION}/grid
 #TODO: Check if everything worked as expected and only remove if no errors occured
 #rm ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_1of2.zip ${ORACLE_INSTALLFILES_LOCATION}/V38501-01_2of2.zip
-
-# Oracle database software
-unzip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_1of2.zip
-unzip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_2of2.zip
-chown -R ${ORACLE_USER}:oinstall ${ORACLE_INSTALLFILES_LOCATION}/database
-#TODO: Check if everything worked as expected and only remove if no errors occured
-#rm  ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_1of2.zip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_2of2.zip
-
 
 # Installation of Grid Infrastructure
 cd ${ORACLE_INSTALLFILES_LOCATION}/grid
@@ -199,7 +189,7 @@ oracle.install.asm.OSASM=asmdba
 oracle.installer.autoupdates.option=SKIP_UPDATES" > ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp
 
 echo "Now installing Grid Infrastructure. This may take a while..."
-su ${ORACLE_USER} -c 'cd ${ORACLE_INSTALLFILES_LOCATION}/grid; ./runInstaller -silent -waitForCompletion -responseFile ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp'
+su ${ORACLE_USER} -c "cd ${ORACLE_INSTALLFILES_LOCATION}/grid; ./runInstaller -silent -waitForCompletion -responseFile ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp"
 
 # Register OraInventory
 ${ORACLE_INVENTORY_LOCATION}/orainstRoot.sh
@@ -211,6 +201,16 @@ ${GRID_HOME}/perl/bin/perl -I${GRID_HOME}/perl/lib -I${GRID_HOME}/crs/install ${
 echo "Finished installing Grid Infrastructure."
 
 # Installation of Database Software
+
+# Oracle database software
+cd ${ORACLE_INSTALLFILES_LOCATION}
+unzip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_1of2.zip
+unzip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_2of2.zip
+chown -R ${ORACLE_USER}:oinstall ${ORACLE_INSTALLFILES_LOCATION}/database
+#TODO: Check if everything worked as expected and only remove if no errors occured
+#rm  ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_1of2.zip ${ORACLE_INSTALLFILES_LOCATION}/V38500-01_2of2.zip
+
+
 cd  ${ORACLE_INSTALLFILES_LOCATION}/database
 rm -rf ${ORACLE_INSTALLFILES_LOCATION}/grid
 
@@ -232,7 +232,7 @@ DECLINE_SECURITY_UPDATES=true
 oracle.installer.autoupdates.option=SKIP_UPDATES" > ${ORACLE_INSTALLFILES_LOCATION}/db_install.rsp
 
 echo "Now installing Database software. This may take a while..."
-su ${ORACLE_USER} -c 'cd ${ORACLE_INSTALLFILES_LOCATION}/database; ./runInstaller -silent -waitForCompletion -responseFile ${ORACLE_INSTALLFILES_LOCATION}/db_install.rsp'
+su ${ORACLE_USER} -c "cd ${ORACLE_INSTALLFILES_LOCATION}/database; ./runInstaller -silent -waitForCompletion -responseFile ${ORACLE_INSTALLFILES_LOCATION}/db_install.rsp"
 
 # Configure DB software
 ${ORACLE_HOME}/root.sh
