@@ -13,7 +13,7 @@
 # Simon Krenger <simon@krenger.ch>
 # August 2013
 
-ORACLE_MOUNTPOINTS={/u01 /u02 /u03 /u04}
+ORACLE_MOUNTPOINTS=(/u01 /u02 /u03 /u04)
 
 ORACLE_USER=oracle
 ORACLE_BASE=${ORACLE_MOUNTPOINTS[0]}/app/oracle
@@ -183,7 +183,7 @@ SELECTED_LANGUAGES=en
 oracle.install.option=CRS_SWONLY
 ORACLE_BASE="${GRID_BASE}"
 ORACLE_HOME="${GRID_HOME}"
-oracle.install.asm.OSDBA=dba
+oracle.install.asm.OSDBA=oinstall
 oracle.install.asm.OSOPER=asmoper
 oracle.install.asm.OSASM=asmdba
 oracle.installer.autoupdates.option=SKIP_UPDATES" > ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp
