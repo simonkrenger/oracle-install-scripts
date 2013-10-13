@@ -104,6 +104,15 @@ else
 	exit 1
 fi
 
+which ntpd
+if [ $? -eq 0 ]; then
+	echo "ntpd is installed"
+else
+	echo "ntpd not found, aborting..."
+	exit 1
+fi
+
+
 which ntpdate
 if [ $? -eq 0 ]; then
 	echo "ntpdate is installed"

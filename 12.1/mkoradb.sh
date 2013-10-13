@@ -3,7 +3,7 @@
 # DB Creation Script for Oracle 12.1
 # Simon Krenger <simon@krenger.ch>
 # August 2013
-ORACLE_SID=mydb01
+export ORACLE_SID=mydb01
 
 # Oracle mountpoints.
 # OFA defines the following usages (Array indexes):
@@ -11,9 +11,10 @@ ORACLE_SID=mydb01
 # Index 1: Datafiles
 # Index 2: Redo Logs
 # Index 3: Redo Logs
-ORACLE_MOUNTPOINTS={/u01 /u02 /u03 /u04}
-ORACLE_BASE=/u01/app/oracle
-ORACLE_HOME=${ORACLE_BASE}/product/12.1.0/db_1
+ORACLE_MOUNTPOINTS=(/u01 /u02 /u03 /u04)
+export ORACLE_BASE=/u01/app/oracle
+export ORACLE_HOME=${ORACLE_BASE}/product/12.1.0/db_1
+export PATH=$PATH:$ORACLE_HOME/bin
 
 MY_ORACLE_PASSWD=tiger
 MY_MEMORY_TARGET=800M
@@ -95,7 +96,8 @@ ALTER USER simon DEFAULT TABLESPACE users;
 ALTER USER dbsnmp ACCOUNT UNLOCK;
 ALTER USER dbsnmp IDENTIFIED BY dbsnmptiger;
 
-ALTER PROFILE default LIMIT password_life_time unlimited;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/04_default_users.sql
+ALTER PROFILE default LIMIT password_life_time unlimited;
+EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/04_default_users.sql
 
 echo "SHUTDOWN IMMEDIATE;
 STARTUP;
@@ -134,8 +136,12 @@ echo "Now restarting the database."
 $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/99_restart_db.sql
 
 # Start listener and register database
+# TODO: Listener configuration (create config, srvctl add listener, start listener, register db)
+
 echo "ALTER SYSTEM REGISTER;
 EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
+
+# TODO Check if listener is running
 
 $ORACLE_HOME/bin/lsnrctl start
 $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
