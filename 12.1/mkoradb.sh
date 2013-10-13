@@ -147,8 +147,8 @@ $ORACLE_HOME/bin/lsnrctl start
 $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
 
 # SRVCTL and ORATAB
-$ORACLE_HOME/bin/srvctl add database -d ${ORACLE_SID} -h $ORACLE_HOME
-echo "${ORACLE_SID}:$ORACLE_HOME:Y" >> /etc/oratab
+$ORACLE_HOME/bin/srvctl add database -db ${ORACLE_SID} -oraclehome $ORACLE_HOME
+#echo "${ORACLE_SID}:$ORACLE_HOME:Y" >> /etc/oratab
 
 # Cleanup
 rm ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
