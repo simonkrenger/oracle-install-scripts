@@ -1,5 +1,5 @@
 # Simons Oracle Installation Scripts
-This repository contains scripts to automate an Oracle database installation. The scripts are self-contained and allow you to perform installation and configuration of a new Oracle database on a vanilla Linux distribution. The scripts install the software according to the Optimal Flexible Architecture (OFA).
+This repository contains scripts to automate an Oracle database installation. The scripts are self-contained and allow you to perform installation and configuration of a new Oracle database on a vanilla Oracle Linux distribution. The scripts install the software according to the Optimal Flexible Architecture (OFA).
 
 I mainly use these scripts for my own personal database setups. Currently, the following scripts are available (for detailed description, see below):
 * install_db_software.sh

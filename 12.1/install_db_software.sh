@@ -11,7 +11,6 @@
 # - Mountpoints $ORACLE_MOUNTPOINTS exist
 #
 # Simon Krenger <simon@krenger.ch>
-# August 2013
 
 ORACLE_MOUNTPOINTS=(/u01 /u02 /u03 /u04)
 
@@ -247,6 +246,37 @@ su ${ORACLE_USER} -c "cd ${ORACLE_INSTALLFILES_LOCATION}/database; ./runInstalle
 
 # Configure DB software
 ${ORACLE_HOME}/root.sh
+
+# Update .bash_profile of oracle user
+su ${ORACLE_USER} -c "echo '
+#Oracle config
+export ORACLE_HOME=${ORACLE_HOME}
+export PATH=$PATH:\$ORACLE_HOME/bin' >> ~/.bash_profile"
+
+# Create an Oracle listener in the GRID_HOME
+echo "Adding listener..."
+
+echo "[GENERAL]
+RESPONSEFILE_VERSION=\"12.1\"
+CREATE_TYPE=\"CUSTOM\"
+SHOW_GUI=false
+[oracle.net.ca]
+INSTALLED_COMPONENTS={\"server\",\"net8\",\"javavm\"}
+INSTALL_TYPE=\"\"typical\"\"
+LISTENER_NUMBER=1
+LISTENER_NAMES={\"LISTENER\"}
+LISTENER_PROTOCOLS={\"TCP;1521\"}
+LISTENER_START=\"\"LISTENER\"\"
+NAMING_METHODS={\"TNSNAMES\",\"ONAMES\",\"HOSTNAME\"}
+NSN_NUMBER=1
+NSN_NAMES={\"EXTPROC_CONNECTION_DATA\"}
+NSN_SERVICE={\"PLSExtProc\"}
+NSN_PROTOCOLS={\"TCP;HOSTNAME;1521\"}" > ${ORACLE_INSTALLFILES_LOCATION}/netca.rsp
+
+su ${ORACLE_USER} -c "${GRID_HOME}/bin/netca -silent -responseFile ${ORACLE_INSTALLFILES_LOCATION}/netca.rsp"
+echo "Listener configured, now adding to CRS..."
+su ${ORACLE_USER} -c "${GRID_HOME}/bin/srvctl add listener -endpoints TCP:1521 -oraclehome ${GRID_HOME}"
+su ${ORACLE_USER} -c "${GRID_HOME}/bin/srvctl start listener"
 
 # Cleanup
 cd
