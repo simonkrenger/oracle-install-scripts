@@ -3,7 +3,7 @@
 # DB Creation Script for Oracle 12.1
 # Simon Krenger <simon@krenger.ch>
 # August 2013
-export ORACLE_SID=mydb01
+export ORACLE_SID=kdb01
 
 # Oracle mountpoints.
 # OFA defines the following usages (Array indexes):
@@ -155,6 +155,7 @@ $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts
 
 # SRVCTL and ORATAB
 $ORACLE_HOME/bin/srvctl add database -db ${ORACLE_SID} -oraclehome $ORACLE_HOME
+echo "${ORACLE_SID}:$ORACLE_HOME:Y" >> /etc/oratab
 
 # Cleanup
 rm ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
