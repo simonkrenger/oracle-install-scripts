@@ -2,7 +2,6 @@
 #
 # DB Creation Script for Oracle 12.1
 # Simon Krenger <simon@krenger.ch>
-# August 2013
 export ORACLE_SID=kdb01
 
 # Oracle mountpoints.
@@ -102,8 +101,8 @@ echo "ALTER USER SYS IDENTIFIED BY "${MY_ORACLE_PASSWD}";
 ALTER USER SYSTEM IDENTIFIED BY "${MY_ORACLE_PASSWD}";
 EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
 
-echo "CREATE USER simon IDENTIFIED BY "${MY_ORACLE_PASSWD}";
-ALTER USER simon DEFAULT TABLESPACE users;
+echo "CREATE USER c##simon IDENTIFIED BY "${MY_ORACLE_PASSWD}";
+ALTER USER c##simon DEFAULT TABLESPACE users;
 
 ALTER USER dbsnmp ACCOUNT UNLOCK;
 ALTER USER dbsnmp IDENTIFIED BY dbsnmptiger;
@@ -154,8 +153,9 @@ EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
 $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
 
 # SRVCTL and ORATAB
+echo "Now calling SRVCTL..."
 $ORACLE_HOME/bin/srvctl add database -db ${ORACLE_SID} -oraclehome $ORACLE_HOME
-echo "${ORACLE_SID}:$ORACLE_HOME:Y" >> /etc/oratab
+echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >> /etc/oratab
 
 # Cleanup
 rm ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
