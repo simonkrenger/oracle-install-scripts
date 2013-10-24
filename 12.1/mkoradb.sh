@@ -130,9 +130,9 @@ echo "NOTE: This may take some time."
 ORACLE_NPROC=`nproc`
 
 PERL5LIB=$ORACLE_HOME/rdbms/admin:$PERL5LIB; export PERL5LIB
-perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -p ${ORACLE_NPROC} -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catalog $ORACLE_HOME/rdbms/admin/catalog.sql;
-perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -p ${ORACLE_NPROC} -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catproc $ORACLE_HOME/rdbms/admin/catproc.sql;
-perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -p ${ORACLE_NPROC} -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b pupbld -u SYSTEM/${MY_ORACLE_PASSWD} $ORACLE_HOME/sqlplus/admin/pupbld.sql;
+perl $ORACLE_HOME/rdbms/admin/catcon.pl -p ${ORACLE_NPROC} -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catalog $ORACLE_HOME/rdbms/admin/catalog.sql;
+perl $ORACLE_HOME/rdbms/admin/catcon.pl -p ${ORACLE_NPROC} -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catproc $ORACLE_HOME/rdbms/admin/catproc.sql;
+perl $ORACLE_HOME/rdbms/admin/catcon.pl -p ${ORACLE_NPROC} -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b pupbld -u SYSTEM/${MY_ORACLE_PASSWD} $ORACLE_HOME/sqlplus/admin/pupbld.sql;
 
 $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/04_default_users.sql
 
