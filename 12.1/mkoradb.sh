@@ -11,6 +11,7 @@ export ORACLE_SID=mydb01
 # Index 1: Datafiles
 # Index 2: Redo Logs
 # Index 3: Redo Logs
+ORACLE_USER=oracle
 ORACLE_MOUNTPOINTS=(/u01 /u02 /u03 /u04)
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=${ORACLE_BASE}/product/12.1.0/db_1
@@ -26,7 +27,18 @@ MY_NCHARSET=AL16UTF16
 ### Script start
 echo "== Script start =="
 
-#TODO: Check if user is oracle
+if [[ $(whoami) != $ORACLE_USER ]]; then 
+	echo "Not $ORACLE_USER, aborting..."
+	exit 1
+fi
+
+which nproc
+if [ $? -eq 0 ]; then
+        echo "nproc is available"
+else
+        echo "nproc not found, aborting..."
+        exit 1
+fi
 
 # Create folders
 echo "Creating folders..."
@@ -116,10 +128,12 @@ $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts
 echo "Executed SQL*Plus scripts, now creating the data dictionary."
 echo "NOTE: This may take some time."
 
+ORACLE_NPROC=`nproc`
+
 PERL5LIB=$ORACLE_HOME/rdbms/admin:$PERL5LIB; export PERL5LIB
-perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catalog $ORACLE_HOME/rdbms/admin/catalog.sql;
-perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catproc $ORACLE_HOME/rdbms/admin/catproc.sql;
-perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b pupbld -u SYSTEM/${MY_ORACLE_PASSWD} $ORACLE_HOME/sqlplus/admin/pupbld.sql;
+perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -p ${ORACLE_NPROC} -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catalog $ORACLE_HOME/rdbms/admin/catalog.sql;
+perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -p ${ORACLE_NPROC} -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catproc $ORACLE_HOME/rdbms/admin/catproc.sql;
+perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -p ${ORACLE_NPROC} -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b pupbld -u SYSTEM/${MY_ORACLE_PASSWD} $ORACLE_HOME/sqlplus/admin/pupbld.sql;
 
 $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/04_default_users.sql
 
@@ -135,20 +149,12 @@ echo "Alright, finished everything so far."
 echo "Now restarting the database."
 $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/99_restart_db.sql
 
-# Start listener and register database
-# TODO: Listener configuration (create config, srvctl add listener, start listener, register db)
-
 echo "ALTER SYSTEM REGISTER;
 EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
-
-# TODO Check if listener is running
-
-$ORACLE_HOME/bin/lsnrctl start
 $ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
 
 # SRVCTL and ORATAB
 $ORACLE_HOME/bin/srvctl add database -db ${ORACLE_SID} -oraclehome $ORACLE_HOME
-#echo "${ORACLE_SID}:$ORACLE_HOME:Y" >> /etc/oratab
 
 # Cleanup
 rm ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
