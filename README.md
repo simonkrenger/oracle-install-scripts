@@ -2,10 +2,33 @@
 This repository contains scripts to automate an Oracle database installation. The scripts are self-contained and allow you to perform installation and configuration of a new Oracle database on a vanilla Oracle Linux distribution. The scripts install the software according to the Optimal Flexible Architecture (OFA).
 
 I mainly use these scripts for my own personal database setups. Currently, the following scripts are available (for detailed description, see below):
+* pandora-ks.cfg (Kickstart file)
 * install_db_software.sh
 * mkoradb.sh
 
-## Description
+## Guide
+### Prerequisites
+Before starting, make sure you have the following software available:
+* An ISO for Oracle Linux 6 (for example V52218-01.iso)
+* Grid Infrastructure installation (V38501-01_1of2.zip and V38501-01_2of2.zip) from http://support.oracle.com
+* Oracle Database 12c installation (V38500-01_1of2.zip and V38500-01_2of2.zip) from http://support.oracle.com
+
+### How-to
+1. Create a new virtual machine with 1 disk and at least 1GB of RAM
+2. Start the VM and at the initial prompt, press TAB. Then, append the kick start parameter:
+
+	ks=https://raw.github.com/simonkrenger/oracle-install-scripts/master/oracle-linux-kickstart/pandora-ks.cfg
+
+3. Your VM will now be automatically set up.
+4. After the installation finished, copy the 4 ZIP files (V38501-01_1of2.zip, V38501-01_2of2.zip, V38500-01_1of2.zip, V38500-01_2of2.zip) to "/home/oracle/".
+5. As "root", execute "/root/install_db_software.sh"
+6. Then, as "oracle", execute "/home/oracle/mkoradb.sh"
+7. Enjoy your newly installed Oracle database
+
+## Script Description
+### pandora-ks.cfg
+This is a kickstart file to automatically set up an Oracle Linux virtual machine with all prerequisites to install Oracle Database.
+
 ### install_db_software.sh
 In its current form, this script allows you to automatically install the Oracle 12c Grid Infrastructure (GI) and Oracle 12c Database Software on a Linux server (plus there are scripts for Oracle 11g R2). For prerequisites, see the header of the script itself. Execute this script as the `root` user. There are a few variables that you can tweak:
 
