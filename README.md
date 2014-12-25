@@ -20,7 +20,7 @@ Before starting, make sure you have the following software available:
 	`ks=https://raw.github.com/simonkrenger/oracle-install-scripts/master/oracle-linux-kickstart/pandora-ks.cfg`
 
 3. Your VM will now be automatically set up.
-4. After the installation finished, copy the 4 ZIP files (V38501-01_1of2.zip, V38501-01_2of2.zip, V38500-01_1of2.zip, V38500-01_2of2.zip) to "/home/oracle/".
+4. After the installation finished, copy the 4 install ZIP files (linuxamd64_12c_database_1of2.zip, linuxamd64_12c_database_2of2.zip, linuxamd64_12c_grid_1of2.zip, linuxamd64_12c_grid_2of2.zip) to "/home/oracle/".
 5. As "root", execute "/root/install_db_software.sh"
 6. Then, as "oracle", execute "/home/oracle/mkoradb.sh"
 7. Enjoy your newly installed Oracle database
