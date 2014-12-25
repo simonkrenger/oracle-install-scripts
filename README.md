@@ -30,7 +30,7 @@ Before starting, make sure you have the following software available:
 This is a kickstart file to automatically set up an Oracle Linux virtual machine with all prerequisites to install Oracle Database.
 
 ### install_db_software.sh
-In its current form, this script allows you to automatically install the Oracle 12c Grid Infrastructure (GI) and Oracle 12c Database Software on a Linux server (plus there are scripts for Oracle 11g R2). For prerequisites, see the header of the script itself. Execute this script as the `root` user. There are a few variables that you can tweak:
+In its current form, this script allows you to automatically install the Oracle 12c Grid Infrastructure (GI) and Oracle 12c Database Software on an Oracle Linux server. For prerequisites, see the header of the script itself. Execute this script as the `root` user. There are a few variables that you can tweak:
 
 Variable | Description
 --- | ---
