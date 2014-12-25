@@ -7,10 +7,10 @@
 # - Installed package "oracle-rdbms-server-12cR1-preinstall.rpm"
 # - Executed oracle-rdbms-server-12cR1-preinstall-verify
 # - Copied GI and DB software (the following archives) to $ORACLE_INSTALLFILES_LOCATION
-#   - linuxamd64_12c_database_1of2.zip
-#   - linuxamd64_12c_database_2of2.zip
-#   - linuxamd64_12c_grid_1of2.zip
-#   - linuxamd64_12c_grid_2of2.zip
+#   - linuxamd64_*_database_1of2.zip
+#   - linuxamd64_*_database_2of2.zip
+#   - linuxamd64_*_grid_1of2.zip
+#   - linuxamd64_*_grid_2of2.zip
 # - (Optional) # passwd oracle
 # - Mountpoints $ORACLE_MOUNTPOINTS exist
 #
@@ -126,11 +126,11 @@ fi
 
 if [ -d "$ORACLE_INSTALLFILES_LOCATION" ]; then
 	echo "$ORACLE_INSTALLFILES_LOCATION exists"
-	if [ `ls -l $ORACLE_INSTALLFILES_LOCATION/linuxamd64_12c_*of2.zip | wc -l` -eq 4 ]; then
+	if [ `ls -l $ORACLE_INSTALLFILES_LOCATION/linuxamd64_*of2.zip | wc -l` -eq 4 ]; then
 		echo "Correct amount of ZIPs found, proceeding..."
 	else
 		echo "No or wrong installation ZIP files found."
-		echo "Please make sure linuxamd64_12c_database_1of2.zip, linuxamd64_12c_database_2of2.zip, linuxamd64_12c_grid_1of2.zip, linuxamd64_12c_grid_2of2.zip are located in $ORACLE_INSTALLFILES_LOCATION"
+		echo "Please make sure linuxamd64_*_database_1of2.zip, linuxamd64_*_database_2of2.zip, linuxamd64_*_grid_1of2.zip, linuxamd64_*_grid_2of2.zip are located in $ORACLE_INSTALLFILES_LOCATION"
 		exit 1
 	fi
 else
@@ -182,8 +182,8 @@ mount -t tmpfs shmfs -o size=$ORACLE_MEMORY_SIZE /dev/shm
 
 # Grid infrastructure
 cd ${ORACLE_INSTALLFILES_LOCATION}
-unzip ${ORACLE_INSTALLFILES_LOCATION}/linuxamd64_12c_grid_1of2.zip
-unzip ${ORACLE_INSTALLFILES_LOCATION}/linuxamd64_12c_grid_2of2.zip
+unzip ${ORACLE_INSTALLFILES_LOCATION}/linuxamd64_*_grid_1of2.zip
+unzip ${ORACLE_INSTALLFILES_LOCATION}/linuxamd64_*_grid_2of2.zip
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_INSTALLFILES_LOCATION}/grid
 #TODO: Check if everything worked as expected and only remove if no errors occured
 
@@ -217,8 +217,8 @@ echo "Finished installing Grid Infrastructure."
 
 # Oracle database software
 cd ${ORACLE_INSTALLFILES_LOCATION}
-unzip ${ORACLE_INSTALLFILES_LOCATION}/linuxamd64_12c_database_1of2.zip
-unzip ${ORACLE_INSTALLFILES_LOCATION}/linuxamd64_12c_database_2of2.zip
+unzip ${ORACLE_INSTALLFILES_LOCATION}/linuxamd64_*_database_1of2.zip
+unzip ${ORACLE_INSTALLFILES_LOCATION}/linuxamd64_*_database_2of2.zip
 chown -R ${ORACLE_USER}:oinstall ${ORACLE_INSTALLFILES_LOCATION}/database
 #TODO: Check if everything worked as expected and only remove if no errors occured
 
