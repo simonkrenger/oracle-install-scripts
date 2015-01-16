@@ -11,7 +11,7 @@ I mainly use these scripts for my own personal database setups. Currently, the f
 Before starting, make sure you have the following software available:
 * An ISO for Oracle Linux 6 (for example V52218-01.iso)
 * Oracle Database 12c Release 1 archives ([linuxamd64_12c_database_1of2.zip, linuxamd64_12c_database_2of2.zip](http://www.oracle.com/technetwork/database/enterprise-edition/downloads/database12c-linux-download-2240591.html))
-* Oracle Database 12c Release 1 Grid Infrastructure archives ([linuxamd64_12c_grid_1of2.zip, linuxamd64_12c_grid_2of2.zip](http://www.oracle.com/technetwork/database/en    terprise-edition/downloads/database12c-linux-download-2240591.html))
+* Oracle Database 12c Release 1 Grid Infrastructure archives ([linuxamd64_12c_grid_1of2.zip, linuxamd64_12c_grid_2of2.zip](http://www.oracle.com/technetwork/database/enterprise-edition/downloads/database12c-linux-download-2240591.html))
 
 ### How-to
 1. Create a new virtual machine with 1 disk and at least 1GB of RAM
@@ -19,7 +19,7 @@ Before starting, make sure you have the following software available:
 
 	`ks=https://raw.github.com/simonkrenger/oracle-install-scripts/master/oracle-linux-kickstart/pandora-ks.cfg`
 
-3. Your VM will now be automatically set up.
+3. Your VM will now be automatically set up. The following scripts will be automatically downloaded to the machine.
 4. After the installation finished, copy the 4 install ZIP files (linuxamd64_12c_database_1of2.zip, linuxamd64_12c_database_2of2.zip, linuxamd64_12c_grid_1of2.zip, linuxamd64_12c_grid_2of2.zip) to "/home/oracle/".
 5. As "root", execute "/root/install_db_software.sh"
 6. Then, as "oracle", execute "/home/oracle/mkoradb.sh"
