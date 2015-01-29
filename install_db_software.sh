@@ -173,7 +173,8 @@ service ntpd start
 
 # Modify /etc/hosts
 # No longer needed with Kickstart file
-#mv /etc/hosts /etc/hosts.original
+cp /etc/hosts /etc/hosts.original
+echo "127.0.0.1 `hostname -s` `hostname`" >> /etc/hosts
 #cat /etc/hosts.original | awk '$1~"^127.0.0.1|^::1"{$2="'`hostname -s`' '`hostname`' "$2}1' OFS="\t" > /etc/hosts
 
 # Modify /etc/fstab
