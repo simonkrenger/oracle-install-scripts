@@ -28,7 +28,7 @@ GRID_USER=oracle
 GRID_BASE=${ORACLE_MOUNTPOINTS[0]}/app/grid
 GRID_HOME=${GRID_BASE}/product/12.1.0/grid_1
 
-ORACLE_MEMORY_SIZE=800M
+ORACLE_MEMORY_SIZE=2048M
 
 unset LANG
 
@@ -172,8 +172,9 @@ ntpdate pool.ntp.org
 service ntpd start
 
 # Modify /etc/hosts
-mv /etc/hosts /etc/hosts.original
-cat /etc/hosts.original | awk '$1~"^127.0.0.1|^::1"{$2="'`hostname -s`' '`hostname`' "$2}1' OFS="\t" > /etc/hosts
+# No longer needed with Kickstart file
+#mv /etc/hosts /etc/hosts.original
+#cat /etc/hosts.original | awk '$1~"^127.0.0.1|^::1"{$2="'`hostname -s`' '`hostname`' "$2}1' OFS="\t" > /etc/hosts
 
 # Modify /etc/fstab
 mv /etc/fstab /etc/fstab.original
