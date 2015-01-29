@@ -202,7 +202,7 @@ oracle.install.asm.OSASM=asmadmin
 oracle.installer.autoupdates.option=SKIP_UPDATES" > ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp
 
 echo "Now installing Grid Infrastructure. This may take a while..."
-su ${ORACLE_USER} -c "cd ${ORACLE_INSTALLFILES_LOCATION}/grid; ./runInstaller -silent -waitForCompletion -responseFile ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp" -ignoreSysPrereqs
+su ${ORACLE_USER} -c "cd ${ORACLE_INSTALLFILES_LOCATION}/grid; ./runInstaller -silent -waitForCompletion -responseFile ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp -ignoreSysPrereqs"
 
 # Register OraInventory
 ${ORACLE_INVENTORY_LOCATION}/orainstRoot.sh
