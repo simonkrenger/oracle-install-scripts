@@ -2,7 +2,6 @@
 #
 # DB Creation Script for Oracle 12.1
 # Simon Krenger <simon@krenger.ch>
-export ORACLE_SID=kdb01
 
 # Oracle mountpoints.
 # OFA defines the following usages (Array indexes):
@@ -15,6 +14,7 @@ ORACLE_MOUNTPOINTS=(/u01 /u02 /u03 /u04)
 export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=${ORACLE_BASE}/product/12.1.0/db_1
 export PATH=$PATH:$ORACLE_HOME/bin
+export ORACLE_SID=kdb01
 
 MY_ORACLE_PASSWD=tiger
 MY_MEMORY_TARGET=800M
@@ -22,6 +22,53 @@ MY_REDO_SIZE=100M
 MY_CHARSET=AL32UTF8
 MY_NCHARSET=AL16UTF16
 
+
+usage()
+{
+cat << EOF
+usage: $0 [-d "dbname"] [-c "charset"] [-n "ncharset"] [-m "memory_size"]
+          [-p "password"] [-h]
+
+Database creation script for Oracle 12.1
+
+OPTIONS:
+    -h     Show this message
+    -d     Database name (defaults to '$ORACLE_SID')
+    -c     Database Character Set (defaults to '$MY_CHARSET')
+    -n     Database National Character Set (defaults to '$MY_NCHARSET')
+    -m     MEMORY_TARGET (defaults to '$MY_MEMORY_TARGET')
+    -p     Password for SYS and SYSTEM (defaults to '$MY_ORACLE_PASSWD')
+EOF
+}
+
+while getopts "hd:c:n:m:p:" OPTION
+do
+	case $OPTION in
+		h)
+		    usage
+		    exit 1
+		    ;;
+		d)
+		    export ORACLE_SID=$OPTARG
+		    ;;
+		c)
+		    MY_CHARSET=$OPTARG
+		    ;;
+		n)
+		    MY_NCHARSET=$OPTARG
+		    ;;
+		m)
+		    MY_MEMORY_TARGET=$OPTARG
+		    ;;
+		p)
+		    MY_ORACLE_PASSWD=$OPTARG
+		    ;;
+		?)
+		    usage
+		    exit 1
+		    ;;
+	esac
+done
 
 ### Script start
 echo "== Script start =="
