@@ -172,10 +172,8 @@ ntpdate pool.ntp.org
 service ntpd start
 
 # Modify /etc/hosts
-# No longer needed with Kickstart file
 cp /etc/hosts /etc/hosts.original
 echo "127.0.0.1 `hostname -s` `hostname`" >> /etc/hosts
-#cat /etc/hosts.original | awk '$1~"^127.0.0.1|^::1"{$2="'`hostname -s`' '`hostname`' "$2}1' OFS="\t" > /etc/hosts
 
 # Modify /etc/fstab
 mv /etc/fstab /etc/fstab.original
@@ -204,7 +202,7 @@ oracle.install.asm.OSASM=asmadmin
 oracle.installer.autoupdates.option=SKIP_UPDATES" > ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp
 
 echo "Now installing Grid Infrastructure. This may take a while..."
-su ${ORACLE_USER} -c "cd ${ORACLE_INSTALLFILES_LOCATION}/grid; ./runInstaller -silent -waitForCompletion -responseFile ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp"
+su ${ORACLE_USER} -c "cd ${ORACLE_INSTALLFILES_LOCATION}/grid; ./runInstaller -silent -waitForCompletion -responseFile ${ORACLE_INSTALLFILES_LOCATION}/grid_install.rsp" -ignoreSysPrereqs
 
 # Register OraInventory
 ${ORACLE_INVENTORY_LOCATION}/orainstRoot.sh
