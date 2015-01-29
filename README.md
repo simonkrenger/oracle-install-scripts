@@ -14,7 +14,7 @@ Before starting, make sure you have the following software available:
 * Oracle Database 12c Release 1 Grid Infrastructure archives ([linuxamd64_12c_grid_1of2.zip, linuxamd64_12c_grid_2of2.zip](http://www.oracle.com/technetwork/database/enterprise-edition/downloads/database12c-linux-download-2240591.html))
 
 ### How-to
-1. Create a new virtual machine with 1 disk and at least 1GB of RAM
+1. Create a new virtual machine with 1 disk and at least 2GB of RAM
 2. Start the VM and at the initial prompt, press TAB. Then, append the kick start parameter:
 
 	`ks=https://raw.github.com/simonkrenger/oracle-install-scripts/master/oracle-linux-kickstart/pandora-ks.cfg`
