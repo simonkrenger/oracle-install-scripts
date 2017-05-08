@@ -156,15 +156,6 @@ echo "ALTER USER SYS IDENTIFIED BY "${MY_ORACLE_PASSWD}";
 ALTER USER SYSTEM IDENTIFIED BY "${MY_ORACLE_PASSWD}";
 EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
 
-echo "CREATE USER c##simon IDENTIFIED BY "${MY_ORACLE_PASSWD}";
-ALTER USER c##simon DEFAULT TABLESPACE users;
-
-ALTER USER dbsnmp ACCOUNT UNLOCK;
-ALTER USER dbsnmp IDENTIFIED BY dbsnmptiger;
-
-ALTER PROFILE default LIMIT password_life_time unlimited;
-EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/04_default_users.sql
-
 echo "SHUTDOWN IMMEDIATE;
 STARTUP;
 EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/99_restart_db.sql
@@ -186,8 +177,6 @@ PERL5LIB=$ORACLE_HOME/rdbms/admin:$PERL5LIB; export PERL5LIB
 perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catalog $ORACLE_HOME/rdbms/admin/catalog.sql;
 perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catproc $ORACLE_HOME/rdbms/admin/catproc.sql;
 perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b pupbld -u SYSTEM/${MY_ORACLE_PASSWD} $ORACLE_HOME/sqlplus/admin/pupbld.sql;
-
-$ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/04_default_users.sql
 
 echo "Finished creating the data dictionary, now recompiling invalid objects..."
 echo "@?/rdbms/admin/utlrp
@@ -211,7 +200,10 @@ $ORACLE_HOME/bin/srvctl add database -db ${ORACLE_SID} -oraclehome $ORACLE_HOME
 echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >> /etc/oratab
 
 # Cleanup
-rm ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
+echo "ALTER USER SYS IDENTIFIED BY "******";
+ALTER USER SYSTEM IDENTIFIED BY "******";
+EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
+
 unset MY_ORACLE_PASSWD
 
 echo DB Setup Finished!
