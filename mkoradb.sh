@@ -15,6 +15,7 @@ export ORACLE_BASE=/u01/app/oracle
 export ORACLE_HOME=${ORACLE_BASE}/product/12.1.0/db_1
 export PATH=$PATH:$ORACLE_HOME/bin
 export ORACLE_SID=kdb01
+export ORACLE_DOMAIN=$(hostname)
 
 MY_ORACLE_PASSWD=tiger
 MY_MEMORY_TARGET=800M
@@ -112,7 +113,7 @@ echo "Preparing files..."
 
 echo "control_files=('/u01/app/oracle/oradata/"${ORACLE_SID}"/control01.ctl', '/u02/app/oracle/oradata/"${ORACLE_SID}"/control02.ctl', '/u03/app/oracle/oradata/"${ORACLE_SID}"/control03.ctl')
 db_name="${ORACLE_SID}"
-db_domain='krenger.local'
+db_domain='${ORACLE_HOSTNAME}'
 memory_max_target="${MY_MEMORY_TARGET}"
 memory_target="${MY_MEMORY_TARGET}"
 remote_login_passwordfile=EXCLUSIVE
