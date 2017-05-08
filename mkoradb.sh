@@ -166,9 +166,13 @@ echo "Files prepared."
 echo "Now executing SQL*Plus scripts..."
 echo "NOTE: This might take some time."
 
-$ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/01_spfile.sql
-$ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/02_create_database.sql
-$ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
+for sql in ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/01_spfile.sql \
+           ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/02_create_database.sql \
+           ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
+do
+	echo "$sql"
+	$ORACLE_HOME/bin/sqlplus / as sysdba @$sql
+done
 
 echo "Executed SQL*Plus scripts, now creating the data dictionary."
 echo "NOTE: This may take some time."
