@@ -92,12 +92,20 @@ mkdir -p ${ORACLE_BASE}/admin/${ORACLE_SID}/{pfile,scripts,dpdump,logbook}
 for mountpoint in ${ORACLE_MOUNTPOINTS[*]}
 do
 	mkdir -p $mountpoint/app/oracle/oradata/${ORACLE_SID}
+	if [ $? -ne 0 ]; then
+		echo "Error creating $mountpoint/app/oracle/oradata/${ORACLE_SID}"
+		exit 1
+	fi
 done
 mkdir -p /u02/app/oracle/oradata/${ORACLE_SID}/pdbseed
 
 # Authentication
 echo "Executing ORAPWD..."
 $ORACLE_HOME/bin/orapwd file=$ORACLE_HOME/dbs/orapw$ORACLE_SID password=$MY_ORACLE_PASSWD
+if [ $? -ne 0 ]; then
+	echo "Error running ORAPWD."
+	exit 1
+fi
 
 # Prepare files
 echo "Preparing files..."
