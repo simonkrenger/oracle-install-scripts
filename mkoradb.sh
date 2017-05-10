@@ -177,32 +177,32 @@ for sql in ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/01_spfile.sql \
            ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
 do
 	echo "$sql"
-	$ORACLE_HOME/bin/sqlplus "sys/${MY_ORACLE_PASSWD}" as sysdba @$sql
+	$ORACLE_HOME/bin/sqlplus / as sysdba @$sql
 done
 
 echo "Executed SQL*Plus scripts, now creating the data dictionary."
 echo "NOTE: This may take some time."
 
 PERL5LIB=$ORACLE_HOME/rdbms/admin:$PERL5LIB; export PERL5LIB
-perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catalog -u SYS/${MY_ORACLE_PASSWD} $ORACLE_HOME/rdbms/admin/catalog.sql;
-perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catproc -u SYS/${MY_ORACLE_PASSWD} $ORACLE_HOME/rdbms/admin/catproc.sql;
+perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catalog $ORACLE_HOME/rdbms/admin/catalog.sql;
+perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b catproc $ORACLE_HOME/rdbms/admin/catproc.sql;
 perl $ORACLE_HOME/rdbms/admin/catcon.pl -n 1 -l ${ORACLE_BASE}/admin/${ORACLE_SID}/logbook -b pupbld -u SYSTEM/${MY_ORACLE_PASSWD} $ORACLE_HOME/sqlplus/admin/pupbld.sql;
 
 echo "Finished creating the data dictionary, now recompiling invalid objects..."
 echo "@?/rdbms/admin/utlrp
 exit;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/99_utlrp.sql
 
-$ORACLE_HOME/bin/sqlplus "sys/${MY_ORACLE_PASSWD}" as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/99_utlrp.sql
+$ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/99_utlrp.sql
 
 
 
 echo "Alright, finished everything so far."
 echo "Now restarting the database."
-$ORACLE_HOME/bin/sqlplus "sys/${MY_ORACLE_PASSWD}" as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/99_restart_db.sql
+$ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/99_restart_db.sql
 
 echo "ALTER SYSTEM REGISTER;
 EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
-$ORACLE_HOME/bin/sqlplus "sys/${MY_ORACLE_PASSWD}" as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
+$ORACLE_HOME/bin/sqlplus / as sysdba @${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/98_system_register.sql
 
 # SRVCTL and ORATAB
 echo "Now calling SRVCTL..."
