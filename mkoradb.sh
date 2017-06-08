@@ -107,7 +107,7 @@ mkdir -p /u02/app/oracle/oradata/${ORACLE_SID}/pdbseed
 echo "Executing ORAPWD..."
 $ORACLE_HOME/bin/orapwd file=$ORACLE_HOME/dbs/orapw$ORACLE_SID password=$MY_ORACLE_PASSWD
 if [ $? -ne 0 ]; then
-	echo "Error running ORAPWD."
+	echo "Error running ORAPWD to create $ORACLE_HOME/dbs/orapw$ORACLE_SID"
 	exit 1
 fi
 
@@ -158,9 +158,11 @@ SIZE 100M AUTOEXTEND ON NEXT 50M MAXSIZE UNLIMITED;
 EXIT;
 EOF
 
-echo "ALTER USER SYS IDENTIFIED BY "${MY_ORACLE_PASSWD}";
+cat <<EOF > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
+ALTER USER SYS IDENTIFIED BY "${MY_ORACLE_PASSWD}";
 ALTER USER SYSTEM IDENTIFIED BY "${MY_ORACLE_PASSWD}";
-EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
+EXIT;
+EOF
 
 echo "SHUTDOWN IMMEDIATE;
 STARTUP;
