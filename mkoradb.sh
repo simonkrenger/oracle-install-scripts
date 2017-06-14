@@ -164,6 +164,16 @@ ALTER USER SYSTEM IDENTIFIED BY "${MY_ORACLE_PASSWD}";
 EXIT;
 EOF
 
+cat <<EOF > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/04_start_pdbs.sql
+connect / as sysdba
+create or replace trigger sys.after_startup
+   after startup on database
+begin
+   execute immediate 'alter pluggable database all open';
+end after_startup;
+/
+EOF
+
 echo "SHUTDOWN IMMEDIATE;
 STARTUP;
 EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/99_restart_db.sql
@@ -176,7 +186,8 @@ echo "NOTE: This might take some time."
 
 for sql in ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/01_spfile.sql \
            ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/02_create_database.sql \
-           ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
+           ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql \
+           ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/04_start_pdbs.sql
 do
 	echo "$sql"
 	$ORACLE_HOME/bin/sqlplus / as sysdba @$sql
