@@ -219,9 +219,7 @@ $ORACLE_HOME/bin/srvctl add database -db ${ORACLE_SID} -oraclehome $ORACLE_HOME
 echo "${ORACLE_SID}:${ORACLE_HOME}:Y" >> /etc/oratab
 
 # Cleanup
-echo "ALTER USER SYS IDENTIFIED BY "******";
-ALTER USER SYSTEM IDENTIFIED BY "******";
-EXIT;" > ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
+rm ${ORACLE_BASE}/admin/${ORACLE_SID}/scripts/03_sys_users.sql
 
 unset MY_ORACLE_PASSWD
 
